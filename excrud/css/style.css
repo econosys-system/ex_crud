@@ -47,7 +47,7 @@ position:relative
 
 .navbar-inner {
 padding:7px 0;
-background:#00ba8b!important;
+background:#577b0f!important;
 -moz-border-radius:0;
 -webkit-border-radius:0;
 border-radius:0
@@ -87,11 +87,14 @@ color:#666
 }
 
 .navbar-search .search-query {
-background:#086;
+background:#b0c389;
 border:0;
 color:#fff;
 line-height:normal
 }
+
+ 
+
 
 .subnavbar {
 margin-bottom:1.5em;
@@ -1090,7 +1093,7 @@ height:250px
 }
 
 .dropdown-menu li>a:hover,.dropdown-menu .active>a,.dropdown-menu .active>a:hover {
-background:#00ba8b
+background:#73a314;
 }
 
 .accordion-heading {

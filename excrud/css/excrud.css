@@ -1,5 +1,10 @@
 @charset "UTF-8";
 
+table td {
+    word-break: break-all;
+}
+
+
 .pagination {
   display: inline-block;
 }
@@ -42,3 +47,12 @@
 		/*margin: -20px;*/
 		/*margin-left: 10px;*/
 	}
+
+
+
+@media (min-width: 1200px) {
+	.my_width{
+	  width:calc(100% - 40px) !important;
+	}
+
+}
