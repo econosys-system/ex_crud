@@ -1,0 +1,61 @@
+<!-- excrud_header.html -->
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner">
+<div class="container">
+<a class="brand" href="{{base_url}}{{path_class}}/">{{view_page_title}}</a>
+<div class="nav-collapse">
+<ul class="nav pull-right">
+<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> {{language.header_config}} <b class="caret"></b></a>
+<ul class="dropdown-menu">
+<li><a href="javascript:if(confirm('{{language.header_json_sample_create_confirm}}')){location.href='{{base_url}}{{path_class}}/json_sample_create/?back_url='+encodeURIComponent(location.href);}">{{language.header_json_sample_create}}</a></li>
+<li><a href="javascript:if(confirm('{{language.header_json_recreate_confirm}}')){location.href='{{base_url}}{{path_class}}/json_recreate/?back_url='+encodeURIComponent(location.href);}">{{language.header_json_recreate}}</a></li>
+</ul>
+</li>
+</ul>
+
+<form class="navbar-search pull-right" onsubmit="location.href=('{{base_url}}{{path_class}}/search/{{table_name}}/'+ encodeURIComponent($('#q').val()) ); return false;">
+<input type="text" name="q" id="q" value="{{q}}" class="search-query" placeholder="{{language.header_search_placeholder}}">
+</form>
+</div><!--/.nav-collapse -->
+</div><!-- /container -->
+</div><!-- /navbar-inner -->
+</div><!-- /navbar -->
+
+<div class="subnavbar">
+<div class="subnavbar-inner">
+<div class="container">
+<ul class="mainnav">
+
+{% include config.excrud.excrud_view_dir ~ '/' ~ 'excrud_header_extend.html' %}
+
+<li class="dropdown">
+<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-th-list"></i><span>{{language.header_tables}}</span></a>
+<ul class="dropdown-menu">
+{% for v in db_visible_table_loop %}
+<li><a href="{{base_url}}{{path_class}}/index/{{v}}">・{{v}}</a></li>
+{% endfor %}
+</ul>
+</li><!-- /dropdown -->
+
+<li class="dropdown">
+<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-th-list"></i><span>{{language.header_sql}}</span></a>
+<ul class="dropdown-menu">
+{% for v in db_visible_table_loop %}
+<li><a href="{{base_url}}{{path_class}}/sql/{{v}}">・{{v}}</a></li>
+{% endfor %}
+</ul>
+</li><!-- /dropdown -->
+
+{% if path_method == 'sql' or path_method == 'sql_submit' %}
+<li>
+<p class="mt24 ml20 mr20" style="color:#ccc; font-size:x-small;">SQL : {{sql_name}}</p>
+</li>
+{% else %}
+<li></li>
+{% endif %}
+
+</ul>
+</div><!-- /container -->
+</div><!-- /subnavbar-inner -->
+</div><!-- /subnavbar -->
+<!-- /excrud_header.html -->

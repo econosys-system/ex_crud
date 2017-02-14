@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+{% if path_method == 'index' %}
+  {% if table_name%}{% set view_page_title = language.html_title_table ~ ' ' ~ language.html_title_left_parenthesis ~ table_name ~ language.html_title_right_parenthesis%}
+  {%else%}{% set view_page_title = language.html_title_method_admintop %}
+  {%endif%}
+{% elseif path_method == 'search' %}{% set view_page_title = language.html_title_method_search ~ '"' ~ q ~ '"' %}
+{% elseif path_method == 'sql_submit' and page_title %}{% set view_page_title = page_title %}
+{% elseif path_method == 'sql' or path_method == 'sql_submit' %}{% set view_page_title = html_title_method_submit_sql%}
+{% endif %}
+{% set view_page_title = config.excrud.excrud_title_name ~ ' ' ~ view_page_title %}
+<title>{{view_page_title}}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="{{base_url}}excrud/js/jquery-1.7.2.min.js" defer></script>
+<script src="{{base_url}}excrud/js/bootstrap.js" defer></script>
+<script src="{{base_url}}excrud/js/jquery.field.min.js" defer></script>
+<link href="{{base_url}}excrud/css/bootstrap.min.css" rel="stylesheet">
+<link href="{{base_url}}excrud/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600" rel="stylesheet">
+<link href="{{base_url}}excrud/css/font-awesome.css" rel="stylesheet">
+<link href="{{base_url}}excrud/css/style.css" rel="stylesheet">
+<!-- <link href="{{base_url}}excrud/css/pages/dashboard.css" rel="stylesheet"> -->
+<link href="{{base_url}}excrud/css/parts.css" rel="stylesheet">
+<link href="{{base_url}}excrud/css/excrud.css" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js" defer></script>
+<![endif]-->
+<script>
+function dl_check()
+{
+  var check_flag = false;
+  $('.dl:checked').each(function(){
+    check_flag = true;
+  });
+  if( check_flag ){
+    $('#dl_delete').show();
+  }
+  else{
+    $('#dl_delete').hide();
+  }
+}
+
+function dl_delete_jump()
+{
+  var arg='';
+  $('.dl:checked').each(function(){
+    arg += '&dl[]='+$(this).val();
+  });
+  if (arg){
+    if ( confirm('{{language.ja_dl_delete_submit_message}}') ){
+      location.href = '{{base_url}}{{path_class}}/dl_delete_submit/{{table_name}}/?_back_url='+encodeURIComponent(location.href)+arg;
+    }
+  }
+}
+
+function dl_multiple_edit_jump()
+{
+  var arg='';
+  $('.dl:checked').each(function(){
+    arg += '&dl[]='+$(this).val();
+  });
+//  alert(arg);
+  if (arg){
+      location.href = '{{base_url}}{{path_class}}/dl_multiple_edit/{{table_name}}/?_back_url='+encodeURIComponent(location.href)+arg;
+  }
+}
+
+</script>
+<style>
+table td {
+    word-break: break-all;
+}
+.my_width{
+  width:1200px !important;
+}
+</style>
+</head>
+<body>
+
+{% include config.excrud.excrud_view_dir ~ '/' ~ 'excrud_header.html' %}
+
+<div class="main">
+<div class="main-inner">
+<div class="container my_width">
+
+
+{% if table_name %}
+<div class="row">
+<div class="span12" style="text-align: center;">
+<div class="pagination mt5 mb5">
+{{pagination|raw}}
+</div>
+</div>
+</div><!-- /row -->
+
+<div class="row">
+<div class="span12 my_width">
+<div class="widget widget-table action-table">
+<div class="widget-header">
+<i class="icon-th-list"></i>
+<h3>{{view_page_title}}</h3>
+</div><!-- /widget-header -->
+<div class="widget-content">
+
+<div class="table-responsive">
+
+<table style="height:100%;" class="table table-striped table-bordered table-condensed">
+
+{% if path_method != 'sql' %}
+{#  and path_method != 'sql_submit' #}
+<tr>
+
+{#
+{% set column_sum = column_loop|length + 2 %}
+<td colspan={{ column_sum }}>
+<span style="display:none;" id="dl_delete"><a href="javascript:dl_delete_jump();;" class="btn btn-large btn-danger btn-support-ask ml5 mt5 mb5"><i class="icon-trash icon-lg"></i> {{language.button_delete}}</a></span>
+<a href="javascript:location.href='{{base_url}}{{path_class}}/add/{{table_name}}';" class="btn btn-large btn-success btn-support-ask ml5 mt5 mb5"><i class="icon-plus icon-lg"></i> {{language.button_create}}</a>
+</td>
+</tr>
+#}
+
+{% set column_sum = column_loop|length + 2 %}
+<td colspan={{ column_sum }}>
+<span style="display:none;" id="dl_delete">
+  <a {% if table_name == 'category_dt' %}style="display:none;" {% endif %}href="javascript:dl_delete_jump();" class="btn btn-large btn-danger btn-support-ask ml5 mt5 mb5"><i class="icon-trash icon-lg"></i> {{language.button_multiple_delete}}</a>
+  <a href="javascript:dl_multiple_edit_jump();" class="btn btn-large btn-warning btn-support-ask ml5 mt5 mb5"><i class="icon-trash icon-lg"></i> {{language.button_multiple_edit}}</a>
+</span>
+<a href="javascript:location.href='{{base_url}}{{path_class}}/add/{{table_name}}';" class="btn btn-large btn-success btn-support-ask ml5 mt5 mb5">{{language.button_data_add}}</a>
+</td>
+</tr>
+
+{% endif %}
+<thead>
+<tr>
+<th><i class="icon-check icon-2x"></i></th>
+{% for v in column_define_loop %}
+{%if v['view_list_flag'] %}<th>{{v['view_list_title']}}</th>{% endif %}
+{% endfor %}
+<th style="width:58px;">{{language.table_title_edit}}</th>
+</tr>
+</thead>
+<tbody>
+{% for z in data_loop %}
+<tr>
+<td class="no_padding">
+<label><input type="checkbox" class="dl" onclick="dl_check();" name="data_list[]" value="{{ z[primary_column_name]|evaluate }}"></label>
+</td>
+{% for n in column_loop %}
+{% set data = z[n] %}
+<td{% if column_define_loop[n]['view_list_nowrap_flag'] %} nowrap{% endif %}>
+{% if column_define_loop[n]['view_list_format'] %}{% set data = z[column_define_loop[n].name] %}{{column_define_loop[n]['view_list_format']|evaluate|raw}}
+{% else %}{{z[n]}}
+{% endif %}
+</td>
+{% endfor %}
+<td nowrap>
+<a href="javascript:location.href='{{base_url}}{{path_class}}/edit/{{table_name}}/{{ z[primary_column_name]|evaluate }}?_back_url='+encodeURIComponent(location.href);" class="btn btn-small btn-success"><i class="btn-icon-only icon-ok"> </i>{{language.button_edit}}</a>
+<a href="javascript:location.href='{{base_url}}{{path_class}}/delete/{{table_name}}/{{ z[primary_column_name]|evaluate }}?_back_url='+encodeURIComponent(location.href);" class="btn btn-danger btn-small"><i class="btn-icon-only icon-remove"> </i>{{language.button_delete}}</a>
+</td>
+</tr>
+{% else %}
+<td colspan={{ column_sum }}>{{language.table_title_nodata}}</td>
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+
+</div><!-- .widget-content -->
+</div>
+</div>
+</div><!-- /row -->
+
+
+<div class="row">
+<div class="span12" style="  text-align: center;">
+<div class="pagination">
+{{pagination|raw}}
+</div>
+</div>
+</div><!-- /row -->
+{% else %}
+<div class="well">
+<h4>{{language.table_title_select_table}}</h4>
+</div>
+{% endif %}
+
+
+</div><!-- /row -->
+</div><!-- /container -->
+</div><!-- /main-inner -->
+<!--</div>-->  <!-- /main -->
+
+
+{% include config.excrud.excrud_view_dir ~ '/' ~ 'excrud_footer.html' %}
+
+
+</body>
+</html>
+<!-- excrud_index.html -->
+<!-- Version 1.00 -->

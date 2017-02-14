@@ -1,0 +1,44 @@
+@charset "UTF-8";
+
+.pagination {
+  display: inline-block;
+}
+.pagination:first-child {
+  border-left: 1px solid #ddd;
+}
+.pagination strong {
+  float: left;
+  padding: 0 14px;
+  line-height: 34px;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  border-left-width: 0;
+}
+
+
+.no_padding{
+	padding: 0 !important;
+	/*padding-top: 2px !important;
+	padding-bottom: 2px !important;*/
+}
+	.no_padding label{
+		cursor: pointer;
+		display:inline-block;
+		position: relative;
+		width: 100%;
+		height: 100%;
+		/*border: 1px solid green;*/
+	}
+	.no_padding input[type="checkbox"] {
+		margin: 0 !important;
+		padding: 0 !important;
+		position: absolute;
+		left: 8px;
+		top: -webkit-calc(50% - 3px) ;
+		top: calc(50% - 3px) ;
+		width: 12px;
+		height: 12px;
+		/*margin-top: -30px;*/
+		/*margin: -20px;*/
+		/*margin-left: 10px;*/
+	}
