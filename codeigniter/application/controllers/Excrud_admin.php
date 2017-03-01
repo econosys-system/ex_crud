@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 // Version 0.31 Change view directory
 // Version 1.00 Share Ware
+// Version 1.01 add excrud_search_encode_slash option
 
 
 class Excrud_admin extends CI_Controller {
@@ -70,6 +71,12 @@ class Excrud_admin extends CI_Controller {
 
 	public function search($table_name, $q='', $arg1='', $arg2='')
 	{
+
+		$c = $this->config->item('excrud');
+		if ( @$c['excrud_search_encode_slash']==1){
+			$q = preg_replace("{%252f}","%2f",$q);
+		}
+
 		$q = urldecode($q);
 		$start_no = 0;
 		if ( strcmp($arg1,'page')==0 && preg_match('/^[0-9]+$/',$arg2) ){

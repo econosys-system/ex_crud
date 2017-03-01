@@ -26,6 +26,9 @@ $config['excrud_view_dir']     = 'excrud';
 // Set Footer HTML
 $config['excrud_footer_html']  = 'EXCRUD &copy; <script type="text/javascript">document.write(new Date().getFullYear());</script> <a href="http://econosys-system.com/" target="_blank">econosys system</a>';
 
+// encode / to %2f when search string in EXCRUD
+$config['excrud_search_encode_slash']  = true;
+
 
 // You can use variables in "override.json"
 // Ex:

@@ -66,6 +66,20 @@ $config['base_url'] = 'http://YOUR_SITE_NAME/';
 
 
 
+## ex) input_type : "checkbox"
+```
+"my_flg": {
+    "input_type"     : "checkbox" ,
+    "input_values"   : [
+      { "name"  : "my_flag_label" , "value" : 1 }
+    ]
+},
+
+```
+
+
+
+
 
 
 
