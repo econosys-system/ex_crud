@@ -105,6 +105,8 @@ $lang['button_sql_submit']   = 'Execute Query';
 
 $lang['button_sql_submit_notice']   = 'Execute Query. OK ?';
 
+$lang['label_option_default']   = '--- Please Select ---';
+
 
 
 

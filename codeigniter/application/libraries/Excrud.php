@@ -1,16 +1,12 @@
 <?php
 
 /*
-  /library/Excrud.php  The MIT License  (c)2016 econosys system  http://econosys-system.com/freesoft/mysql_ci_excrud.html
+  /library/Excrud.php (c)2017 econosys system  http://econosys-system.com/
 
-  version 0.1
-  version 0.2  MySQLのコメント取得
-  version 0.3  jsonエラー時のメッセージ表示
-  version 0.4  load_in() 追加
-  version 0.41 configの衝突を避ける
-  version 0.42 複数の override.json 対応
-  version 0.43 "view_list_flag": 0 の時も他の項目からデータ参照は出来るように
-  version 0.44 SQL文の検索結果数を取得する時に trim するよう修正
+  version 0.45 [fix] error message
+  version 0.46 [fix] if $config['excrud_override'] is null . don't read override.json
+  version 0.47 [add] tables() method
+
 */
 
 if (!defined('BASEPATH')) exit('No direct script access allowed');
@@ -19,10 +15,12 @@ class Excrud {
 
   private $db_table_loop;
   private $db_visible_table_loop;
-  private $crud_table;
   private $column_list;
 
-  public function __construct(){
+  public $crud_table;
+
+  public function __construct()
+  {
     $this->CI =& get_instance();
     $this->CI->load->database();
     $this->CI->load->library('extwig');
@@ -37,14 +35,17 @@ class Excrud {
 
     $this->db_table_loop = $this->CI->db->list_tables();
     $this->CI->config->load('excrud',TRUE);
+
     $this->_load_or_creat_json();
+
     $this->db_visible_table_loop = $this->_visible_table_loop();
    $this->CI->extwig->addExtension(new Twig_Extensions_Extension_Text()); //truncate filter
   }
 
 
 
-  public function define_data($table_name){
+  public function define_data($table_name)
+  {
     $data = array();
     $data['base_url']  = base_url();
     $data['primary_column_name'] = $this->load_primary_column_name($table_name);
@@ -53,12 +54,18 @@ class Excrud {
     $data['path_method'] = $this->CI->uri->segment(2);
     $data['table_name'] = $table_name;
     $data['db_visible_table_loop'] = $this->db_visible_table_loop;
+    // language
+    $lang = $this->CI->config->item('language');
+    $this->CI->lang->load('excrud', $lang);
+    $data['language'] = $this->CI->lang->language;
+
     return $data;
   }
 
 
 
-  public function load_primary_column_name($table_name){
+  public function load_primary_column_name($table_name)
+  {
     $this->_check_json_file($table_name);
     if (! @$this->crud_table[$table_name]['primary_column_name'] ){
       $this->_view_error('Excrud : load_primary_column_name() : "primary_column_name" is not exists in table '.$table_name."<br>\n please check ".$this->CI->config->item('excrud_data_path', 'excrud').'/table.json');
@@ -68,7 +75,8 @@ class Excrud {
 
 
 
-  public function load_column_list($table_name, $flag_name='view_list_flag'){
+  public function load_column_list($table_name, $flag_name='view_list_flag')
+  {
     $this->_check_json_file($table_name);
     $column = array();
     foreach ($this->crud_table[$table_name]['table_desc'] as $k => $v) {
@@ -84,14 +92,16 @@ class Excrud {
 
 
 
-  public function load_column_define($table_name){
+  public function load_column_define($table_name)
+  {
     $this->_check_json_file($table_name);
     return $this->crud_table[$table_name]['table_desc'];
   }
 
 
 
-  public function load_column_define_multiple($table_name){
+  public function load_column_define_multiple($table_name)
+  {
     $this->_check_json_file($table_name);
 
     $column_define_multiple = array();
@@ -108,7 +118,8 @@ class Excrud {
 
 
 
-  private function _create_pagination($table_name, $total_rows, $q=''){
+  private function _create_pagination($table_name, $total_rows, $q='')
+  {
     $path_class  = $this->CI->uri->segment(1);
     $path_method = $this->CI->uri->segment(2);
     $this->CI->load->library('pagination');
@@ -135,25 +146,23 @@ class Excrud {
 
 
 
-  public function load_only_table_list(){
+  public function load_only_table_list()
+  {
     $data = array();
     $data['base_url']  = base_url();
 		$data['path_class']  = $this->CI->uri->segment(1);
     $data['db_table_loop']         = $this->db_table_loop;
     $data['db_visible_table_loop'] = $this->db_visible_table_loop;
     return $data;
-}
+  }
 
 
 
-  public function load($table_name,$start_no=0){
+  public function load($table_name,$start_no=0)
+  {
     $this->_check_json_file($table_name);
- //$this->CI->mydump->dump($this->crud_table[$table_name]);
     $column = array();
     foreach ($this->crud_table[$table_name]['table_desc'] as $k => $v) {
-      // if ($v['view_list_flag']==1 && (! in_array($v['name'], $column,true) ) ){
-      //   array_push($column, $v['name']);
-      // }
         array_push($column, $v['name']);
     }
     $data_count = $this->CI->db->count_all_results($table_name);
@@ -176,11 +185,17 @@ class Excrud {
     $data['path_method'] = $this->CI->uri->segment(2);
     $data['db_table_loop']         = $this->db_table_loop;
     $data['db_visible_table_loop'] = $this->db_visible_table_loop;
+    // language
+    $lang = $this->CI->config->item('language');
+    $this->CI->lang->load('excrud', $lang);
+    $data['language'] = $this->CI->lang->language;
     return $data;
   }
 
 
-  public function load_one($table_name,$id=-1){
+
+  public function load_one($table_name,$id=-1)
+  {
     $this->_check_json_file($table_name);
     if (! $id){
       $this->_view_error('Excrud : load_one() : please set id -> '.$id);
@@ -196,7 +211,9 @@ class Excrud {
   }
 
 
-  public function ___backup___load_in( $table_name, $id_array = array() ){
+
+  public function ___backup___load_in( $table_name, $id_array = array() )
+  {
     $this->_check_json_file($table_name);
     if (count($id_array)==0){
       $this->_view_error('Excrud : load_in() : please set id_array');
@@ -214,7 +231,8 @@ class Excrud {
 
 
 
-  public function load_in( $table_name, $id_array = array() ){
+  public function load_in( $table_name, $id_array = array() )
+  {
     $this->_check_json_file($table_name);
     if (count($id_array)==0){
       $this->_view_error('Excrud : load_in() : please set id_array');
@@ -245,13 +263,12 @@ class Excrud {
     $data['db_visible_table_loop'] = $this->db_visible_table_loop;
 
     return $data;
-
   }
 
 
 
-
-  public function search($table_name, $q='', $start_no=0){
+  public function search($table_name, $q='', $start_no=0)
+  {
     $data_loop = array();
     $this->_check_json_file($table_name);
     if ( ! isset($this->crud_table[$table_name]['search_columns']) ){
@@ -291,7 +308,9 @@ class Excrud {
   }
 
 
-  public function insert($table_name, $q=array()){
+
+  public function insert($table_name, $q=array())
+  {
     $this->_check_json_file($table_name);
     if ( ! count($q) ){
       $this->_view_error('Excrud : update() : column is not set');
@@ -308,7 +327,9 @@ class Excrud {
   }
 
 
-  public function update($table_name, $id, $q=array()){
+
+  public function update($table_name, $id, $q=array())
+  {
     $this->_check_json_file($table_name);
     if (! $id){
       $this->_view_error('Excrud : update() : please set id -> '.$id);
@@ -317,7 +338,6 @@ class Excrud {
       $this->_view_error('Excrud : update() : column is not set');
     }
 
-    // 数値型のカラムに 空文字 をセットすると 0 が代入されるので明示的に null をセットする
     foreach ($q as $k => $v) {
       if ( strcmp($q[$k],'')==0 ){
         $q[$k] = null;
@@ -328,17 +348,13 @@ class Excrud {
     $this->CI->db->where($primary_column_name, $id);
     $this->CI->db->update($table_name, $q);
     $affected_row = $this->CI->db->affected_rows();
-/* 同じデータを更新した時に 更新業は0 になるので以下はOFF
-    if ( $affected_row < 1 ){
-      $sql = $this->CI->db->last_query();
-      $this->_view_error('Excrud : update() : cannot data update in SQL -> '. $sql .' ;' );
-    }
-*/
     return $affected_row;
   }
 
 
-  public function delete($table_name, $id){
+
+  public function delete($table_name, $id)
+  {
     $this->_check_json_file($table_name);
     if (! $id){
       $this->_view_error('Excrud : update() : please set id -> '.$id);
@@ -355,8 +371,8 @@ class Excrud {
 
 
 
-  public function exec_sql($table_name, $sql_name, $pager_flag=false,$start_no=0){
-
+  public function exec_sql($table_name, $sql_name, $pager_flag=false,$start_no=0)
+  {
     $data_count = 0;
 
     if ( preg_match("/;/", $sql_name) ){
@@ -380,7 +396,6 @@ class Excrud {
       $query = $this->CI->db->query($sql_name);
     }
 
-
     if (is_bool($query)){
       $data['data_loop'] = array(
         'result' => $query
@@ -388,7 +403,6 @@ class Excrud {
     }
     else{
       $data['data_loop'] = $query->result_array();
-      // $data_count = @$count_query->result_array()[0]['numrows'];
       $data['data_count'] = $data_count;
     }
      if (preg_match("/^SELECT/i", trim($sql_name))){
@@ -414,12 +428,19 @@ class Excrud {
       $data['db_table_loop']         = $this->db_table_loop;
       $data['db_visible_table_loop'] = $this->db_visible_table_loop;
       return $data;
-
   }
 
 
 
-  public function _check_json_file($table_name){
+  public function tables()
+  {
+    return $this->db_table_loop;
+  }
+
+
+
+  public function _check_json_file($table_name)
+  {
     if (! $table_name){
       $this->_view_error('Excrud : _check_json_file() : please set table name -> '.$table_name);
     }
@@ -429,7 +450,9 @@ class Excrud {
   }
 
 
-  public function _add_table_json($table_name){
+
+  public function _add_table_json($table_name)
+  {
     $hash = array();
     $hash['visible_flg'] = 1;
     $hash['table_desc'] = array();
@@ -452,7 +475,6 @@ class Excrud {
       $i++;
     }
     $this->crud_table[$table_name] = $hash;
-// $this->CI->mydump->dump($this->crud_table);
     $json_data = json_encode($this->crud_table,JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
     if ( ! write_file($this->CI->config->item('excrud_data_path', 'excrud').'/table.json', $json_data)){
      die('Excrud : _add_table_json() : can not write ->'.$this->CI->config->item('excrud_data_path', 'excrud').'table.json');
@@ -460,7 +482,9 @@ class Excrud {
   }
 
 
-  public function _view_json_error(){
+
+  public function _view_json_error()
+  {
     switch (json_last_error()) {
         case JSON_ERROR_NONE:
             echo ' - No errors';
@@ -487,7 +511,9 @@ class Excrud {
   }
 
 
-  public function _load_or_creat_json(){
+
+  public function _load_or_creat_json()
+  {
     $this->CI->load->helper('file');
     if ( is_file($this->CI->config->item('excrud_data_path', 'excrud').'/table.json') ){
       $json = read_file($this->CI->config->item('excrud_data_path', 'excrud').'/table.json');
@@ -513,9 +539,7 @@ class Excrud {
 
       $comment_loop = $query2->result_array();
 
-      // primary_column_name
       $crud_table[$v]['primary_column_name'] = $query->list_fields()[0];
-      // ソート順をセット
       $crud_table[$v]['order_by'] = "{$crud_table[$v]['primary_column_name']} ASC";
 
       // search_columns
@@ -532,7 +556,7 @@ class Excrud {
       foreach ($query->list_fields() as $field){
         $crud_table[$v]['table_desc'][$field]= array();
         $crud_table[$v]['table_desc'][$field]['name'] = $field;
-        // TYPE と DEFAULT を設定
+
         $db_column_type    ='';
         $db_column_default ='';
         $query_tmp = $this->CI->db->query(" DESCRIBE {$v}");
@@ -545,7 +569,7 @@ class Excrud {
         }
         $crud_table[$v]['table_desc'][$field]['type']    = $db_column_type;
         $crud_table[$v]['table_desc'][$field]['default'] = $db_column_default;
-        // コメントがあればセット
+
         $comment_hash = $this->recursive_array_search('Field', $field, $comment_loop);	// ['class']=>['newp'] のハッシュを選択
         if ($comment_hash){ $crud_table[$v]['table_desc'][$field]['comment'] = $comment_hash['Comment']; }
 
@@ -562,13 +586,10 @@ class Excrud {
             //DATETIME または TIMESTAMP カラムは view_list_formatを追加
             $crud_table[$v]['table_desc'][$field]['view_list_format'] = "{{ data|date('m/d H:i:s') }}";
         }
-
         $i++;
       }
     }
 
-    // configファイルに overrideの設定がある場合はそこの項目を追加、ない場合は override.json の設定を追加
-// $this->CI->mydump->dump( $this->CI->config->item( 'excrud') );
     if ( is_array( $this->CI->config->item('excrud_override', 'excrud') ) ){
       foreach ($this->CI->config->item('excrud_override', 'excrud') as $json_v) {
         $crud_table = $this->_override_json($json_v, $crud_table);
@@ -578,7 +599,7 @@ class Excrud {
         $crud_table = $this->_override_json($this->CI->config->item('excrud_override', 'excrud') , $crud_table);
     }
     else{
-      $crud_table = $this->_override_json('override.json' , $crud_table);
+      // OFF $crud_table = $this->_override_json('override.json' , $crud_table);
     }
 
     $json_data = json_encode($crud_table,JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
@@ -586,17 +607,15 @@ class Excrud {
        die('Excrud : _load_or_creat_json() : can not write ->'.$this->CI->config->item('excrud_data_path', 'excrud').'table.json');
      }
      $this->crud_table = $crud_table;
-
-
   }
 
 
 
-
-  private function _override_json( $file_name = 'override.json' , $crud_table){
+  public function _override_json( $file_name = 'override.json' , $crud_table)
+  {
     $file_full_name = $this->CI->config->item('excrud_data_path', 'excrud').'/'. $file_name;
     if ( ! is_file( $file_full_name) ){
-      die("jsonファイル : ".$file_full_name." がありません。");
+      die("please set json file : ".$file_full_name);
     }
     $add_json = read_file( $file_full_name );
     $add_hash = json_decode ( $add_json, true );
@@ -629,14 +648,12 @@ class Excrud {
     //    die('Excrud : _load_or_creat_json() : can not write ->'.$this->CI->config->item('excrud_data_path', 'excrud').'table.json');
     //  }
     //  $this->crud_table = $crud_table;
-
   }
 
 
 
-
-
-  public function recursive_array_search($key, $value, $hash) {
+  public function recursive_array_search($key, $value, $hash)
+  {
 	    foreach($hash as $k => $v) {
 				if (is_array($v)){
 					$rt = $this->recursive_array_search($key, $value, $v);
@@ -651,16 +668,16 @@ class Excrud {
 
 
 
-  public function _visible_table_loop(){
+  public function _visible_table_loop()
+  {
     $visible_table_loop = array();
     foreach ($this->crud_table as $k => $v) {
-      if ( $v['visible_flg'] == 1 ){
+      if ( @$v['visible_flg'] == 1 ){
         array_push($visible_table_loop, $k);
       }
     }
   return $visible_table_loop;
   }
-
 
 
 

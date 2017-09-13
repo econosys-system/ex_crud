@@ -20,7 +20,7 @@ $config['excrud_override'] = array(
 
 
 // Set View Directory
-$config['excrud_view_dir']     = 'excrud';
+$config['excrud_admin_view_dir']     = 'excrud_admin';
 
 
 // Set Footer HTML

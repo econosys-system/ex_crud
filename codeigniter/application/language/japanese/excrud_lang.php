@@ -105,6 +105,7 @@ $lang['button_sql_submit']   = 'SQL文の実行';
 
 $lang['button_sql_submit_notice']   = 'SQL文を実行します。この処理は取り消すことができません。よろしいですか？';
 
+$lang['label_option_default']   = '--- 選択して下さい ---';
 
 
 
