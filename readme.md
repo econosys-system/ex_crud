@@ -1,9 +1,13 @@
 ![EX_CRUD](./img_src/logo.png)
+
 #EX_CRUD : CRUD SYSTEM for CodeIgniter and MySQL
+
  - Easy Customizable ( using Bootstrap + Twig Template )
  - You can use CRUD + Search + Execute SQL
 
+
 #● Install EX_CRUD
+
 
 ## 1. upload files to your server
 
@@ -33,7 +37,7 @@ chmod 0777 codeigniter/application/excrud
 
 
 
-#● Start EX_CRUD
+# ● Start EX_CRUD
 access excrud_admin Controller
 
 ex) http://YOUR_SITE_NAME/excrud_admin  
