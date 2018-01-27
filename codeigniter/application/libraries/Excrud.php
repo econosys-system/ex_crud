@@ -3,10 +3,13 @@
 /*
   /library/Excrud.php (c)2017 econosys system  http://econosys-system.com/
 
-  version 0.45 [fix] error message
-  version 0.46 [fix] if $config['excrud_override'] is null . don't read override.json
-  version 0.47 [add] tables() method
-
+  version 0.45  [fix] error message
+  version 0.46  [fix] if $config['excrud_override'] is null . don't read override.json
+  version 0.47  [add] tables() method
+  version 0.48  [fix] $db_visible_table_loop move to public
+  version 0.49  [add] config override
+  version 0.491 [add] error message
+  version 0.492 [add] add title column define_data()
 */
 
 if (!defined('BASEPATH')) exit('No direct script access allowed');
@@ -14,10 +17,11 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 class Excrud {
 
   private $db_table_loop;
-  private $db_visible_table_loop;
   private $column_list;
 
+  public $db_visible_table_loop;
   public $crud_table;
+  public $db_visible_table_loop;
 
   public function __construct()
   {

@@ -2,6 +2,7 @@
 
 // version 1.00
 // version 1.01    move Twig Extentions to Twig/extention_user/
+// version 1.20    configに extention_user がなくてもエラーとしない
 
 if (!defined('BASEPATH')) {exit('No direct script access allowed');}
 
@@ -36,9 +37,11 @@ class Extwig
         // config file   : codeigniter/application/config/extwig.php
         // extension dir : codeigniter/application/libraries/Twig/Extensionuser
         $extention_user = $this->CI->config->item('extention_user', 'extwig');
-        foreach ( @$extention_user as $v) {
-            $class = $v;
-            $this->_twig->addExtension(new $class);
+        if ( is_array($extention_user) ){
+            foreach ( @$extention_user as $v) {
+                $class = $v;
+                $this->_twig->addExtension(new $class);
+            }
         }
 
     }

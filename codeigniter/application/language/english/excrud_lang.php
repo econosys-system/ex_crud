@@ -113,13 +113,24 @@ $lang['label_option_default']   = '--- Please Select ---';
 //header
 $lang['header_config']   = 'Config';
 
-$lang['header_json_sample_create']   = 'Create Json Sample';
+$lang['header_json_sample_create']         = 'Create Json Sample';
+$lang['header_json_sample_create_confirm'] = "Create sample file : __sample__override.json \n OK ?";
+$lang['header_json_recreate']              = 'Json re-create';
+$lang['header_json_recreate_confirm']      = 'recreate json file. OK ?';
+$lang['header_db_structure']               = 'View DB Table Structure';
 
-$lang['header_json_sample_create_confirm']   = "Create sample file : __sample__override.json \n OK ?";
-
-$lang['header_json_recreate']   = 'Json re-create';
-
-$lang['header_json_recreate_confirm']   = 'recreate json file. OK ?';
+$lang['db_structure__table_name']         = 'TABLE NAME';
+$lang['db_structure__index']              = 'INDEX';
+$lang['db_structure__column_name']        = 'COLUMN NAME';
+$lang['db_structure__column_detail_name'] = 'COLUMN DETAIL';
+$lang['db_structure__column_type']        = 'TYPE';
+$lang['db_structure__column_size']        = 'SIZE';
+$lang['db_structure__column_attr']        = 'ATTR';
+$lang['db_structure__column_null']        = 'NULL';
+$lang['db_structure__column_key']         = 'KEY';
+$lang['db_structure__column_extra']       = 'EXTRA';
+$lang['db_structure__column_default']     = 'DEFAULT';
+$lang['db_structure__column_memo']        = 'MEMO';
 
 
 

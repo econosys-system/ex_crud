@@ -112,13 +112,24 @@ $lang['label_option_default']   = '--- 選択して下さい ---';
 //header
 $lang['header_config']   = '設定';
 
-$lang['header_json_sample_create']   = 'Json サンプル作成';
+$lang['header_json_sample_create']         = 'Json サンプル作成';
+$lang['header_json_sample_create_confirm'] = '__sample__override.jsonファイルを自動生成します。よろしいですか？';
+$lang['header_json_recreate']              = 'Json 再作成';
+$lang['header_json_recreate_confirm']      = 'jsonファイルを再生成します。よろしいですか？';
+$lang['header_db_structure']               = 'DBテーブル定義を表示';
 
-$lang['header_json_sample_create_confirm']   = '__sample__override.jsonファイルを自動生成します。よろしいですか？';
-
-$lang['header_json_recreate']   = 'Json 再作成';
-
-$lang['header_json_recreate_confirm']   = 'jsonファイルを再生成します。よろしいですか？';
+$lang['db_structure__table_name']         = 'テーブル名';
+$lang['db_structure__index']              = 'インデックス';
+$lang['db_structure__column_name']        = 'カラム名';
+$lang['db_structure__column_detail_name'] = 'カラム説明';
+$lang['db_structure__column_type']        = '型';
+$lang['db_structure__column_size']        = 'サイズ';
+$lang['db_structure__column_attr']        = '属性';
+$lang['db_structure__column_null']        = 'NULL';
+$lang['db_structure__column_key']         = 'KEY';
+$lang['db_structure__column_extra']       = 'EXTRA';
+$lang['db_structure__column_default']     = 'DEFAULT';
+$lang['db_structure__column_memo']        = 'メモ';
 
 
 

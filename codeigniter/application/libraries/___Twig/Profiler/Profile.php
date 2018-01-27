@@ -3,7 +3,7 @@
 /*
  * This file is part of Twig.
  *
- * (c) 2015 Fabien Potencier
+ * (c) Fabien Potencier
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,6 +11,8 @@
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @final
  */
 class Twig_Profiler_Profile implements IteratorAggregate, Serializable
 {
@@ -26,7 +28,7 @@ class Twig_Profiler_Profile implements IteratorAggregate, Serializable
     private $ends = array();
     private $profiles = array();
 
-    public function __construct($template = 'main', $type = Twig_Profiler_Profile::ROOT, $name = 'main')
+    public function __construct($template = 'main', $type = self::ROOT, $name = 'main')
     {
         $this->template = $template;
         $this->type = $type;
@@ -86,6 +88,16 @@ class Twig_Profiler_Profile implements IteratorAggregate, Serializable
      */
     public function getDuration()
     {
+        if ($this->isRoot() && $this->profiles) {
+            // for the root node with children, duration is the sum of all child durations
+            $duration = 0;
+            foreach ($this->profiles as $profile) {
+                $duration += $profile->getDuration();
+            }
+
+            return $duration;
+        }
+
         return isset($this->ends['wt']) && isset($this->starts['wt']) ? $this->ends['wt'] - $this->starts['wt'] : 0;
     }
 

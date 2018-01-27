@@ -3,7 +3,7 @@
 /*
  * This file is part of Twig.
  *
- * (c) 2009 Fabien Potencier
+ * (c) Fabien Potencier
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,24 +12,18 @@
 /**
  * Twig_NodeVisitor_Sandbox implements sandboxing.
  *
+ * @final
+ *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class Twig_NodeVisitor_Sandbox implements Twig_NodeVisitorInterface
+class Twig_NodeVisitor_Sandbox extends Twig_BaseNodeVisitor
 {
     protected $inAModule = false;
     protected $tags;
     protected $filters;
     protected $functions;
 
-    /**
-     * Called before child nodes are visited.
-     *
-     * @param Twig_NodeInterface $node The node to visit
-     * @param Twig_Environment   $env  The Twig environment instance
-     *
-     * @return Twig_NodeInterface The modified node
-     */
-    public function enterNode(Twig_NodeInterface $node, Twig_Environment $env)
+    protected function doEnterNode(Twig_Node $node, Twig_Environment $env)
     {
         if ($node instanceof Twig_Node_Module) {
             $this->inAModule = true;
@@ -56,22 +50,14 @@ class Twig_NodeVisitor_Sandbox implements Twig_NodeVisitorInterface
 
             // wrap print to check __toString() calls
             if ($node instanceof Twig_Node_Print) {
-                return new Twig_Node_SandboxedPrint($node->getNode('expr'), $node->getLine(), $node->getNodeTag());
+                return new Twig_Node_SandboxedPrint($node->getNode('expr'), $node->getTemplateLine(), $node->getNodeTag());
             }
         }
 
         return $node;
     }
 
-    /**
-     * Called after child nodes are visited.
-     *
-     * @param Twig_NodeInterface $node The node to visit
-     * @param Twig_Environment   $env  The Twig environment instance
-     *
-     * @return Twig_NodeInterface The modified node
-     */
-    public function leaveNode(Twig_NodeInterface $node, Twig_Environment $env)
+    protected function doLeaveNode(Twig_Node $node, Twig_Environment $env)
     {
         if ($node instanceof Twig_Node_Module) {
             $this->inAModule = false;
@@ -82,9 +68,6 @@ class Twig_NodeVisitor_Sandbox implements Twig_NodeVisitorInterface
         return $node;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPriority()
     {
         return 0;
