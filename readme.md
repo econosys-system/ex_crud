@@ -1,5 +1,5 @@
 ![EX_CRUD](./img_src/logo.png)
-#EX_CRUD : CRUD SYSTEM for CodeIgniter
+#EX_CRUD : CRUD SYSTEM for CodeIgniter and MySQL
  - Easy Customizable ( using Bootstrap + Twig Template )
  - You can use CRUD + Search + Execute SQL
 
