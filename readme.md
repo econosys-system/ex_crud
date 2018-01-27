@@ -1,12 +1,11 @@
-![EX_CRUD](./img_src/logo.png)
-
-#EX_CRUD : CRUD SYSTEM for CodeIgniter and MySQL
+![EX_CRUD](./img_src/logo.png)  
+# EX_CRUD : CRUD SYSTEM for CodeIgniter and MySQL
 
  - Easy Customizable ( using Bootstrap + Twig Template )
  - You can use CRUD + Search + Execute SQL
 
 
-#● Install EX_CRUD
+# ● Install EX_CRUD
 
 
 ## 1. upload files to your server
@@ -44,8 +43,8 @@ ex) http://YOUR_SITE_NAME/excrud_admin
 ex) http://YOUR_SITE_NAME/index.php/excrud_admin
 
 
-
-#● Configure ex_crud
+ 
+# ● Configure ex_crud
 
 ## 1. Create Json file "___sample___override.json"
 select menu "Config > Create Json Sample"
@@ -71,7 +70,7 @@ select menu "Config > Json re-create"
 
 
 
-#● How to edit override.json
+# ● How to edit override.json
 
 ## ex
 ```
